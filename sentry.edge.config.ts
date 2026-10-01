@@ -6,11 +6,22 @@
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-  dsn: "https://1964c0b74e587189c8fbe41627de0a79@o4506876178464768.ingest.us.sentry.io/4509366354247680",
+  dsn: "https://c2222e461286b813690395828705f5b4@o4512182004809728.ingest.de.sentry.io/4512182006972496",
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,
 
-  // Setting this option to true will print useful information to the console while you're setting up Sentry.
-  debug: false,
+  // Turns off collection of data that could identify users. Adjust per category:
+  // https://docs.sentry.io/platforms/javascript/configuration/options/#dataCollection
+  dataCollection: {
+    userInfo: false,
+    graphQL: { document: false, variables: false },
+    genAI: { inputs: false, outputs: false },
+    databaseQueryData: false,
+    queues: false,
+    httpBodies: [],
+    httpHeaders: { deny: ["forwarded", "-ip", "remote-", "via", "-user"] },
+    cookies: { deny: ["forwarded", "-ip", "remote-", "via", "-user"] },
+    urlQueryParams: { deny: ["forwarded", "-ip", "remote-", "via", "-user"] },
+  },
 });
