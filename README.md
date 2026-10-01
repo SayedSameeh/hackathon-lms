@@ -1,168 +1,190 @@
-<div align="center">
-  <br />
-    <a href="https://www.youtube.com/watch?v=XUkNR-JfHwo" target="_blank">
-      <img src="public/readme/hero.png" alt="Project Banner">
-    </a>
-  <br />
+# Hackathon LMS
 
-  <div>
-    <img src="https://img.shields.io/badge/-Next.JS-black?style=for-the-badge&logoColor=white&logo=nextdotjs&color=black" alt="next.js" />
-    <img src="https://img.shields.io/badge/-Vapi-black?style=for-the-badge&logoColor=white&logo=vapi.com&color=green" alt="next.js" />
-    <img src="https://img.shields.io/badge/-Tailwind-00BCFF?style=for-the-badge&logo=tailwind-css&logoColor=white" />
-  </div>
+An AI-powered Learning Management System developed and customized by our team for a hackathon.
 
-  <h3 align="center">SaaS App - LMS with Next.js, Supabase & Payments</h3>
+## About
 
-   <div align="center">
-     Build this project step by step with our detailed tutorial on <a href="https://www.youtube.com/watch?v=XUkNR-JfHwo" target="_blank"><b>JavaScript Mastery</b></a> YouTube. Join the JSM family!
-    </div>
-</div>
+This project is a customized and extended version of the LMS SaaS application originally created by **Adrian Hajdin / JavaScript Mastery**.
 
-## 📋 <a name="table">Table of Contents</a>
+We cloned the original open-source repository as our starting point and have since configured, integrated, and modified the project to fit our hackathon requirements.
 
-1. 🤖 [Introduction](#introduction)
-2. ⚙️ [Tech Stack](#tech-stack)
-3. 🔋 [Features](#features)
-4. 🤸 [Quick Start](#quick-start)
-5. 🔗 [Assets](#links)
-6. 🚀 [More](#more)
+Our goal is to use the existing LMS foundation while adding our own functionality, integrations, database configuration, and project-specific features.
 
-## 🚨 Tutorial
+## Original Project
 
-This repository contains the code corresponding to an in-depth tutorial available on our YouTube channel, <a href="https://www.youtube.com/@javascriptmastery/videos" target="_blank"><b>JavaScript Mastery</b></a>.
+The project was originally created by **Adrian Hajdin / JavaScript Mastery**.
 
-If you prefer visual learning, this is the perfect resource for you. Follow our tutorial to learn how to build projects like these step-by-step in a beginner-friendly manner!
+Original repository:
 
-<a href="https://www.youtube.com/watch?v=XUkNR-JfHwo" target="_blank"><img src="https://github.com/sujatagunale/EasyRead/assets/151519281/1736fca5-a031-4854-8c09-bc110e3bc16d" /></a>
+https://github.com/adrianhajdin/saas-app
 
-## <a name="introduction">🤖 Introduction</a>
+The original project provides the foundation for the LMS interface, application architecture, and several of the existing learning features.
 
-Create an LMS SaaS app from scratch featuring user authentication, subscriptions, and payments using Next.js, Supabase, and Stripe! You'll build and deploy a real-time teaching platform with Vapi, integrate an AI vocal agent, and deliver seamless, interactive learning sessions.
+We acknowledge and credit the original creators for their work.
 
-If you're getting started and need assistance or face any bugs, join our active Discord community with over **50k+** members. It's a place where people help each other out.
+## Our Contributions
 
-<a href="https://discord.com/invite/n6EdbFJ" target="_blank"><img src="https://github.com/sujatagunale/EasyRead/assets/151519281/618f4872-1e10-42da-8213-1d69e486d02e" /></a>
+Our team has configured and extended the original project for this hackathon.
 
-## <a name="tech-stack">⚙️ Tech Stack</a>
+Current additions and configuration include:
 
-- **[Clerk](https://jsm.dev/converso-clerk)** is a unified platform for authentication, user management, and billing. It offers embeddable UI components, flexible APIs, and admin dashboards for secure user management. Clerk also simplifies subscription management, allowing you to define plans, create pricing pages, and control access based on subscription tiers—all in one solution.
+* Supabase database integration and schema configuration
+* Clerk authentication
+* Clerk billing and access control
+* Vapi voice AI integration
+* Sentry error tracking and monitoring
+* Environment configuration for the required services
+* Custom database records and learning content
+* Project-specific UI and functionality
+* Additional features developed as part of the hackathon
 
-* **[Next.js](https://nextjs.org/)** is a powerful React framework that enables the development of fast, scalable web applications with features like server-side rendering, static site generation, and API routes for building full-stack applications.
+Further functionality will be added and documented as development continues.
 
-* **[Sentry](https://jsm.dev/converso-sentry)** is an error tracking and performance monitoring tool that helps developers fix bugs faster by providing real-time alerts, stack traces, and performance insights.
+## Tech Stack
 
-* **[shadcn/ui](https://ui.shadcn.com/)** is a customizable component library built on Radix UI and Tailwind CSS. It offers a modern, accessible design system with pre-built components that are easy to theme and extend, making it ideal for building polished UIs with minimal effort.
+* **Next.js** - Application framework
+* **TypeScript** - Programming language
+* **Supabase** - PostgreSQL database and backend services
+* **Clerk** - Authentication and user management
+* **Vapi** - Voice AI
+* **Sentry** - Error tracking and monitoring
+* **Tailwind CSS** - Styling
+* **shadcn/ui** - UI components
+* **Zod** - Schema validation
 
-- **[Supabase](https://supabase.com/)** is an open-source backend-as-a-service platform that provides instant APIs, real-time subscriptions, authentication, storage, and a PostgreSQL database, enabling developers to build scalable and secure applications with ease.
+## Features
 
-* **[Tailwind CSS](https://tailwindcss.com/)** is a utility-first CSS framework that allows developers to design custom user interfaces by applying low-level utility classes directly in HTML, streamlining the design process.
-* **[TypeScript](https://www.typescriptlang.org/)** is a superset of JavaScript that adds static typing, providing better tooling, code quality, and error detection for developers, making it ideal for building large-scale applications.
+### Learning
 
-- **[Vapi](https://jsm.dev/converso-vapi)** is a developer-centric voice AI platform that enables the creation of conversational voice agents with low-latency voice interactions, speech-to-text, and text-to-speech capabilities. It supports multilingual conversations, customizable voices, and seamless integration with various AI models and tools.
+* AI-powered learning companions
+* Subject and topic based learning
+* Interactive learning sessions
+* Custom learning companions
+* Session history
+* Bookmarks
+* Search and filtering
 
-* **[Zod](https://zod.dev/)** is a TypeScript-first schema validation library that provides a simple and expressive way to define and validate data structures. Zod ensures data integrity by catching errors early during development.
+### Authentication
 
-## <a name="features">🔋 Features</a>
+* User registration and login
+* Secure authentication through Clerk
+* User-specific learning data
 
-👉 **AI Voice Agents**: Take tutoring sessions with voiced AIs specializing in the topics you want to get better at.
+### Voice AI
 
-👉 **Authentication**: Secure user sign-up and sign-in with Clerk; Google authentication and many more.
+* Voice-based AI learning sessions
+* Conversational interaction with AI tutors
+* Vapi-powered voice agents
 
-👉 **Billing & Subscriptions**: Easily manage plans, upgrades, and payment details.
+### Platform
 
-👉 **Bookmarks and Session History**: Let users organise their learning by bookmarking tutors and accessing previous sessions.
+* Responsive user interface
+* Supabase database
+* Subscription and access management
+* Error monitoring with Sentry
 
-👉 **Code Reusability**: Leverage reusable components and a modular codebase for efficient development.
+## Getting Started
 
-👉 **Create a Tutor**: Create your own AI tutors, choosing a subject, topic, and style of conversation.
+### Prerequisites
 
-👉 **Cross-Device Compatibility**: Fully responsive design that works seamlessly across all devices.
+Make sure you have the following installed:
 
-👉 **Database Integration**: Uses Supabase for real-time data handling and storage needs.
+* Git
+* Node.js
+* npm
 
-👉 **Modern UI/UX**: Clean, responsive design built with Tailwind CSS and shadcn/ui for a sleek user experience.
-
-👉 **Scalable Tech Stack**: Built with Next.js for a fast, production-ready web application that scales seamlessly.
-
-👉 **Search Functionality**: Find tutors quickly with robust filters and search bar.
-
-and many more, including code architecture and reusability.
-
-## <a name="quick-start">🤸 Quick Start</a>
-
-Follow these steps to set up the project locally on your machine.
-
-**Prerequisites**
-
-Make sure you have the following installed on your machine:
-
-- [Git](https://git-scm.com/)
-- [Node.js](https://nodejs.org/en)
-- [npm](https://www.npmjs.com/) (Node Package Manager)
-
-**Cloning the Repository**
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/adrianhajdin/saas-app.git
-cd saas-app
+git clone https://github.com/SayedSameeh/hackathon-lms.git
+cd hackathon-lms
 ```
 
-**Installation**
-
-Install the project dependencies using npm:
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-**Set Up Environment Variables**
+### 3. Configure Environment Variables
 
-Create a new file named `.env` in the root of your project and add the following content:
+Create a `.env.local` file in the project root.
 
-```env
-# Sentry
-SENTRY_AUTH_TOKEN=
+Use `.env.example` as a reference for the required environment variables.
 
-# Vapi
-NEXT_PUBLIC_VAPI_WEB_TOKEN=
+You will need credentials/configuration for:
 
-# Clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
-NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
+* Clerk
+* Supabase
+* Vapi
+* Sentry
 
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-```
+Do not commit `.env.local` or any file containing private credentials to GitHub.
 
-Replace the placeholder values with your actual ImageKit, NeonDB, Upstash, and Resend credentials. You can obtain these credentials by signing up on: [Supabase](https://supabase.com/dashboard), [Clerk](https://jsm.dev/converso-clerk), [Sentry](https://jsm.dev/converso-sentry), [Vapi](https://jsm.dev/converso-vapi).
-
-**Running the Project**
+### 4. Run the Development Server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to view the project.
+Open the application at:
 
-## <a name="links">🔗 Assets</a>
+http://localhost:3000
 
-Assets and snippets used in the project can be found in the **[video kit](https://jsm.dev/converso-kit)**.
+## Project Structure
 
-<a href="https://jsm.dev/converso-kit" target="_blank">
-  <img src="public/readme/videokit.jpg" alt="Video Kit Banner">
-</a>
+```text
+hackathon-lms/
+├── app/                    # Next.js application routes and pages
+├── components/             # Reusable UI components
+├── constants/              # Application constants
+├── lib/                    # Database, authentication, and application logic
+├── public/                 # Static assets
+├── types/                  # TypeScript types
+├── .env.example            # Environment variable template
+├── middleware.ts           # Authentication middleware
+├── next.config.ts          # Next.js configuration
+└── package.json            # Project dependencies and scripts
+```
 
-## <a name="more">🚀 More</a>
+## Development
 
-**Advance your skills with Next.js Pro Course**
+This repository is being actively developed as part of a hackathon project.
 
-Enjoyed creating this project? Dive deeper into our PRO courses for a richer learning adventure. They're packed with
-detailed explanations, cool features, and exercises to boost your skills. Give it a go!
+The original LMS implementation serves as the foundation, while our team is responsible for the configuration, integrations, modifications, and additional features being developed for this version.
 
-<a href="https://jsm.dev/converso-nextjs" target="_blank">
-  <img src="public/readme/jsmpro.jpg" alt="Project Banner">
-</a>
+## Credits
+
+### Original Project
+
+**Adrian Hajdin / JavaScript Mastery**
+
+Original repository:
+
+https://github.com/adrianhajdin/saas-app
+
+We thank the original creator and contributors for providing the project that we used as the foundation for this hackathon application.
+
+### Third-Party Technologies
+
+This project also uses several third-party services and open-source technologies, including:
+
+* Next.js
+* TypeScript
+* Supabase
+* Clerk
+* Vapi
+* Sentry
+* Tailwind CSS
+* shadcn/ui
+* Zod
+
+Each technology remains subject to its respective license and terms.
+
+## License
+
+This repository contains code derived from the original project referenced above.
+
+Please refer to the original repository and its applicable license/terms before redistributing this project or its derivative works.
+
+Our team's original modifications and additions are intended for this hackathon project.
