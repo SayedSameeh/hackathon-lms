@@ -5,7 +5,7 @@ import NavItems from "@/components/NavItems";
 
 const Navbar = () => {
     return (
-        <nav className="navbar">
+        <nav className="navbar fixed z-100">
             <Link href="/">
                 <div className="flex items-center gap-2.5 cursor-pointer">
                     <Image

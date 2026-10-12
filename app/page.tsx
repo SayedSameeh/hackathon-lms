@@ -1,39 +1,35 @@
-import CompanionCard from "@/components/CompanionCard";
-import CompanionsList from "@/components/CompanionsList";
 import CTA from "@/components/CTA";
-import {recentSessions} from "@/constants";
-import {getAllCompanions, getRecentSessions} from "@/lib/actions/companion.actions";
-import {getSubjectColor} from "@/lib/utils";
+import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 const Page = async () => {
-    const companions = await getAllCompanions({ limit: 3 });
-    const recentSessionsCompanions = await getRecentSessions(10);
+  // Automatically route active users to their private dashboard
+  const { userId } = await auth();
+  if (userId) redirect("/dashboard");
 
   return (
     <main>
-      <h1>Popular Companions</h1>
+      <section className="home-section flex-col items-center text-center py-20">
+        <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          Master any tech skill, without the fluff.
+        </h1>
+        <p className="text-lg opacity-80 max-w-2xl mb-10">
+          Upload your university syllabus or enter a topic. Get a modern, industry-standard roadmap taught by a real-time AI mentor.
+        </p>
+        
+        <Link href="/sign-up">
+          <button className="btn-primary px-10 py-4 justify-center text-lg font-bold">
+            Get Started
+          </button>
+        </Link>
+      </section>
 
-        <section className="home-section">
-            {companions.map((companion) => (
-                <CompanionCard
-                    key={companion.id}
-                    {...companion}
-                    color={getSubjectColor(companion.subject)}
-                />
-            ))}
-
-        </section>
-
-        <section className="home-section">
-            <CompanionsList
-                title="Recently completed sessions"
-                companions={recentSessionsCompanions}
-                classNames="w-2/3 max-lg:w-full"
-            />
-            <CTA />
-        </section>
+      <section className="home-section flex-col mt-12 border-t pt-12">
+        <CTA />
+      </section>
     </main>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;
