@@ -34,7 +34,7 @@ const LearningPathTimeline = ({ title, modules }: LearningPathTimelineProps) => 
               {/* Timeline Node */}
               <span
                 className={cn(
-                  "absolute -left-[41px] md:-left-[57px] flex items-center justify-center w-8 h-8 rounded-full ring-8 ring-white",
+                  "absolute -left-10.25 md:-left-14.25 flex items-center justify-center w-8 h-8 rounded-full ring-8 ring-white",
                   isCompleted ? "bg-[#1E90FF]" : isActive ? "bg-[#1E90FF] ring-[#1E90FF]/20" : "bg-gray-200"
                 )}
               >

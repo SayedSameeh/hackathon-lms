@@ -53,6 +53,7 @@ const LessonPage = async ({ params }: LessonPageProps) => {
                 userImage={user.imageUrl!}
                 style="casual"
                 voice="male"
+                userInterest={moduleData.learning_paths?.user_interest || 'general real-world applications'}
             />
         </main>
     )

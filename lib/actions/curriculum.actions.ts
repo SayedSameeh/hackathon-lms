@@ -53,17 +53,20 @@ export async function generateSyllabus(targetSkill: string): Promise<ModuleTempl
   }
 }
 
-export const createLearningPath = async (targetSkill: string) => {
+export const createLearningPath = async (targetSkill: string, userInterest: string) => {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
 
     const supabase = createSupabaseClient();
-
     const generatedModules = await generateSyllabus(targetSkill);
 
     const { data: pathData, error: pathError } = await supabase
         .from('learning_paths')
-        .insert({ user_id: userId, target_skill: targetSkill })
+        .insert({ 
+            user_id: userId, 
+            target_skill: targetSkill,
+            user_interest: userInterest || 'general real-world applications' // Fallback
+        })
         .select()
         .single();
 
@@ -78,17 +81,11 @@ export const createLearningPath = async (targetSkill: string) => {
         is_completed: false
     }));
 
-    const { data: modulesData, error: modulesError } = await supabase
-        .from('path_modules')
-        .insert(modulesToInsert)
-        .select();
-
+    const { error: modulesError } = await supabase.from('path_modules').insert(modulesToInsert);
     if (modulesError) throw new Error(modulesError.message);
 
-    return { path: pathData, modules: modulesData };
+    return true;
 }
-
-// Add to the bottom of lib/actions/curriculum.actions.ts
 
 export const getActiveLearningPath = async () => {
     const { userId } = await auth();
@@ -126,9 +123,13 @@ export const getActiveLearningPath = async () => {
 export const getPathModule = async (moduleId: string) => {
     const supabase = createSupabaseClient();
     
+    // Use Supabase foreign key joining to grab the parent path's interest
     const { data, error } = await supabase
         .from('path_modules')
-        .select('*')
+        .select(`
+            *,
+            learning_paths ( user_interest )
+        `)
         .eq('id', moduleId)
         .single();
 
@@ -136,8 +137,6 @@ export const getPathModule = async (moduleId: string) => {
     
     return data;
 }
-
-// Add to the bottom of lib/actions/curriculum.actions.ts
 
 export const markModuleCompleted = async (moduleId: string) => {
     const supabase = createSupabaseClient();
