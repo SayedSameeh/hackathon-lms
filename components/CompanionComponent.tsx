@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { cn, configureAssistant, getSubjectColor } from "@/lib/utils";
 import { vapi } from "@/lib/vapi.sdk";
 import Image from "next/image";
-import Lottie, { LottieRefCurrentProps } from "lottie-react";
+import { useLottie } from "lottie-react";
 import soundwaves from "@/constants/soundwaves.json";
 import { addToSessionHistory } from "@/lib/actions/companion.actions";
 import { markModuleCompleted } from "@/lib/actions/curriculum.actions";
@@ -51,17 +51,20 @@ const CompanionComponent = ({
   const [isGeneratingNotes, setIsGeneratingNotes] = useState(false);
   const [sessionNotes, setSessionNotes] = useState<string | null>(null);
 
-  const lottieRef = useRef<LottieRefCurrentProps>(null);
+  // Replaced Lottie component with the Turbopack-safe named hook
+  const { View: LottieView, play: playLottie, stop: stopLottie } = useLottie({
+    animationData: soundwaves,
+    autoplay: false,
+  });
 
+  // Simplified animation control
   useEffect(() => {
-    if (lottieRef) {
-      if (isSpeaking) {
-        lottieRef.current?.play();
-      } else {
-        lottieRef.current?.stop();
-      }
+    if (isSpeaking) {
+      playLottie();
+    } else {
+      stopLottie();
     }
-  }, [isSpeaking, lottieRef]);
+  }, [isSpeaking, playLottie, stopLottie]);
 
   useEffect(() => {
     const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
@@ -144,15 +147,15 @@ const CompanionComponent = ({
   };
 
   return (
-    <section className="flex flex-col h-[70vh] min-h-125">
+    <section className="flex flex-col h-[70vh] min-h-[500px]">
       <section className="flex gap-8 max-lg:flex-col h-full w-full mb-8">
         
         {/* Toggle between Avatar and Generated Notes */}
         {callStatus === CallStatus.FINISHED && moduleId ? (
-          <div className="flex-1 bg-white rounded-2xl border border-gray-200 shadow-sm p-8 overflow-y-auto min-h-75">
+          <div className="flex-1 bg-white rounded-2xl border border-gray-200 shadow-sm p-8 overflow-y-auto min-h-[300px]">
             {isGeneratingNotes ? (
               <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E90FF]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 <p className="font-bold text-lg">Compiling your session notes...</p>
               </div>
             ) : sessionNotes ? (
@@ -193,16 +196,12 @@ const CompanionComponent = ({
 
               <div
                 className={cn(
-                  "absolute transition-opacity duration-1000",
+                  "absolute transition-opacity duration-1000 companion-lottie",
                   callStatus === CallStatus.ACTIVE ? "opacity-100" : "opacity-0",
                 )}
               >
-                <Lottie
-                  lottieRef={lottieRef}
-                  animationData={soundwaves}
-                  autoplay={false}
-                  className="companion-lottie"
-                />
+                {/* Render the hook's view directly */}
+                {LottieView}
               </div>
             </div>
             <p className="font-bold text-2xl">{name}</p>
@@ -217,9 +216,9 @@ const CompanionComponent = ({
               alt={userName}
               width={130}
               height={130}
-              className="rounded-lg"
+              className="rounded-lg shadow-sm"
             />
-            <p className="font-bold text-2xl">{userName}</p>
+            <p className="font-bold text-2xl tracking-tight">{userName}</p>
           </div>
           <button
             className="btn-mic"
@@ -238,8 +237,8 @@ const CompanionComponent = ({
           </button>
           <button
             className={cn(
-              "rounded-lg py-2 cursor-pointer transition-colors w-full text-white font-bold",
-              callStatus === CallStatus.ACTIVE ? "bg-red-600 hover:bg-red-700" : "bg-[#1E90FF] hover:bg-blue-600",
+              "rounded-xl py-4 cursor-pointer transition-all w-full text-white font-bold text-lg shadow-sm",
+              callStatus === CallStatus.ACTIVE ? "bg-red-600 hover:bg-red-700 shadow-red-600/20" : "bg-primary hover:bg-primary/90 shadow-primary/20",
               callStatus === CallStatus.CONNECTING && "animate-pulse",
             )}
             onClick={
@@ -249,33 +248,33 @@ const CompanionComponent = ({
             {callStatus === CallStatus.ACTIVE
               ? "End Session"
               : callStatus === CallStatus.CONNECTING
-                ? "Connecting"
+                ? "Connecting..."
                 : "Start Session"}
           </button>
         </div>
       </section>
 
       {/* Transcript Log */}
-      <section className="transcript relative flex-1 min-h-50 border border-gray-100 rounded-xl bg-gray-50 overflow-hidden">
-        <div className="transcript-message no-scrollbar p-6 h-full overflow-y-auto">
+      <section className="transcript">
+        <div className="transcript-message no-scrollbar">
           {messages.map((message, index) => {
             if (message.role === "assistant") {
               return (
-                <p key={index} className="max-sm:text-sm mb-4">
-                  <span className="font-bold text-[#1E90FF]">{name.split(" ")[0]}:</span>{" "}
+                <p key={index} className="max-sm:text-sm">
+                  <span className="font-bold text-primary">{name.split(" ")[0]}:</span>{" "}
                   {message.content}
                 </p>
               );
             } else {
               return (
-                <p key={index} className="max-sm:text-sm mb-4 text-gray-700">
-                  <span className="font-bold">{userName}:</span> {message.content}
+                <p key={index} className="max-sm:text-sm text-slate-700">
+                  <span className="font-bold text-slate-900">{userName}:</span> {message.content}
                 </p>
               );
             }
           })}
         </div>
-        <div className="absolute bottom-0 w-full h-12 bg-linear-to-t from-gray-50 to-transparent pointer-events-none" />
+        <div className="transcript-fade" />
       </section>
     </section>
   );

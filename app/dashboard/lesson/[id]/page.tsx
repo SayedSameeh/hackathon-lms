@@ -3,7 +3,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import CompanionComponent from "@/components/CompanionComponent";
 import Link from "next/link";
-import { getSubjectColor } from "@/lib/utils";
+import { ArrowLeft, Clock } from "lucide-react";
 
 interface LessonPageProps {
     params: Promise<{ id: string }>;
@@ -20,25 +20,33 @@ const LessonPage = async ({ params }: LessonPageProps) => {
     const moduleData = await getPathModule(cleanId);
 
     return (
-        <main className="max-w-6xl mx-auto p-4 md:p-8">
-            {/* Simple navigation to go back to the timeline */}
-            <Link href="/dashboard" className="inline-block mb-6 font-semibold text-[#1E90FF] hover:underline">
-                ← Back to Curriculum
+        <main className="w-full flex flex-col gap-6">
+            
+            {/* Clean Back Navigation */}
+            <Link href="/dashboard" className="inline-flex items-center gap-2 font-semibold text-slate-500 hover:text-primary transition-colors w-fit">
+                <ArrowLeft className="w-4 h-4" />
+                Back to Curriculum
             </Link>
 
-            <article className="flex rounded-xl border border-gray-200 justify-between p-6 mb-8 bg-white shadow-sm max-md:flex-col">
-                <div className="flex flex-col gap-2">
+            {/* Redesigned Header Card */}
+            <article className="flex rounded-2xl border border-slate-200 bg-white p-8 shadow-sm justify-between items-start max-md:flex-col max-md:gap-6">
+                <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-3">
-                        <span className="bg-[#1E90FF]/10 text-[#1E90FF] text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-md">
+                        <span className="bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg">
                             Module {moduleData.module_order}
                         </span>
-                        <h1 className="font-bold text-2xl">
+                        <h1 className="font-extrabold text-3xl text-slate-900 tracking-tight">
                             {moduleData.name}
                         </h1>
                     </div>
-                    <p className="text-lg opacity-80">{moduleData.topic}</p>
+                    <p className="text-lg text-slate-500 font-medium pl-1 max-w-2xl">
+                        {moduleData.topic}
+                    </p>
                 </div>
-                <div className="items-start text-xl max-md:hidden opacity-70 font-medium">
+                
+                {/* Duration Badge */}
+                <div className="flex items-center gap-2 text-slate-600 font-bold bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 max-md:self-start">
+                    <Clock className="w-5 h-5 text-primary" />
                     {moduleData.duration} mins
                 </div>
             </article>

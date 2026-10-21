@@ -1,8 +1,10 @@
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import Link from "next/link";
+"use client";
 
-interface PathModule {
+import Link from "next/link";
+import { CheckCircle2, Circle, Clock, PlayCircle, Lock } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface Module {
   id: string;
   module_order: number;
   name: string;
@@ -11,85 +13,105 @@ interface PathModule {
   is_completed: boolean;
 }
 
-interface LearningPathTimelineProps {
-  title: string;
-  modules: PathModule[];
-}
-
-const LearningPathTimeline = ({ title, modules }: LearningPathTimelineProps) => {
-  const activeIndex = modules.findIndex((m) => !m.is_completed);
+export default function LearningPathTimeline({ modules }: { modules: Module[] }) {
+  // Find the first incomplete module to mark it as "Up Next"
+  const activeIndex = modules.findIndex(m => !m.is_completed);
 
   return (
-    <div className="w-full max-w-3xl py-8">
-      <h2 className="font-bold text-3xl mb-10">{title}</h2>
-      
-      <div className="relative border-l-2 border-gray-200 ml-4 md:ml-6">
-        {modules.map((module, index) => {
-          const isCompleted = module.is_completed;
-          const isActive = index === activeIndex;
-          const isLocked = !isCompleted && !isActive;
+    <div className="flex flex-col gap-0 relative w-full">
+      {modules.map((module, index) => {
+        const isCompleted = module.is_completed;
+        const isActive = index === activeIndex;
 
-          return (
-            <div key={module.id} className="mb-10 ml-8 md:ml-12 relative group">
-              {/* Timeline Node */}
-              <span
-                className={cn(
-                  "absolute -left-10.25 md:-left-14.25 flex items-center justify-center w-8 h-8 rounded-full ring-8 ring-white",
-                  isCompleted ? "bg-[#1E90FF]" : isActive ? "bg-[#1E90FF] ring-[#1E90FF]/20" : "bg-gray-200"
-                )}
-              >
-                {isCompleted ? (
-                  <Image src="/icons/check.svg" alt="completed" width={14} height={14} className="text-white invert" />
-                ) : (
-                  <span className={cn("text-sm font-bold", isActive ? "text-white" : "text-gray-500")}>
-                    {module.module_order}
-                  </span>
-                )}
-              </span>
+        return (
+          <div key={module.id} className="relative flex gap-6 pb-8 last:pb-0 group">
+            
+            {/* The Connecting Line */}
+            {index !== modules.length - 1 && (
+              <div className={cn(
+                "absolute left-[19px] top-10 bottom-0 w-[2px] transition-colors duration-500",
+                isCompleted ? "bg-primary/50" : "bg-slate-100"
+              )} />
+            )}
 
-              {/* Module Card */}
-              <article
-                className={cn(
-                  "p-6 rounded-xl border transition-all duration-200 bg-white",
-                  isActive ? "border-[#1E90FF] shadow-sm" : "border-gray-200",
-                  isLocked && "opacity-50"
-                )}
-              >
-                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className={cn(
-                        "text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-md",
-                        isCompleted ? "bg-[#1E90FF]/10 text-[#1E90FF]" : isActive ? "bg-[#1E90FF]/20 text-[#1E90FF]" : "bg-gray-100 text-gray-500"
-                      )}>
-                        {isCompleted ? "Completed" : isActive ? "Up Next" : "Locked"}
-                      </span>
-                      <span className="text-sm font-medium flex items-center gap-1 opacity-70">
-                        <Image src="/icons/clock.svg" alt="time" width={14} height={14} />
-                        {module.duration} mins
-                      </span>
-                    </div>
-                    <h3 className="text-2xl font-bold mb-2">{module.name}</h3>
-                    <p className="text-sm opacity-80">{module.topic}</p>
-                  </div>
+            {/* The Timeline Node / Status Icon */}
+            <div className="relative z-10 flex flex-col items-center justify-start pt-2">
+              <div className={cn(
+                "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 shadow-sm bg-white",
+                isCompleted ? "border-primary text-primary" :
+                isActive ? "border-primary text-primary shadow-primary/20 bg-primary/5 ring-4 ring-primary/10" :
+                "border-slate-200 text-slate-300"
+              )}>
+                {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : 
+                 isActive ? <Circle className="w-4 h-4 fill-primary" /> : 
+                 <Lock className="w-4 h-4" />}
+              </div>
+            </div>
 
-                  <div className="shrink-0 mt-2 md:mt-0">
+            {/* The Module Card */}
+            <div className={cn(
+              "flex-1 rounded-2xl border p-6 transition-all duration-300",
+              isCompleted ? "bg-slate-50 border-slate-200 opacity-70" :
+              isActive ? "bg-white border-primary/30 shadow-md ring-1 ring-primary/5" :
+              "bg-white border-slate-100 opacity-50"
+            )}>
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-3">
+                    <span className={cn(
+                      "text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-md",
+                      isCompleted ? "bg-slate-200 text-slate-600" :
+                      isActive ? "bg-primary/10 text-primary" :
+                      "bg-slate-100 text-slate-500"
+                    )}>
+                      Module {module.module_order}
+                    </span>
                     {isActive && (
-                      <Link href={`/dashboard/lesson/${module.id}`}>
-                        <button className="btn-primary w-full justify-center">
-                          Start Lesson
-                        </button>
-                      </Link>
+                      <span className="text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-md flex items-center gap-1.5 animate-pulse">
+                        <PlayCircle className="w-3.5 h-3.5" /> Up Next
+                      </span>
                     )}
                   </div>
+                  
+                  <h3 className={cn(
+                    "text-xl font-bold tracking-tight",
+                    isCompleted ? "text-slate-700 line-through decoration-slate-300" : "text-slate-900"
+                  )}>
+                    {module.name}
+                  </h3>
+                  <p className="text-slate-500 font-medium">{module.topic}</p>
                 </div>
-              </article>
+
+                {/* Actions & Metadata */}
+                <div className="flex flex-col items-start md:items-end gap-4 min-w-[160px] pt-1">
+                   <div className="flex items-center gap-1.5 text-sm font-bold text-slate-400">
+                     <Clock className="w-4 h-4" />
+                     {module.duration} mins
+                   </div>
+                   
+                   {isActive && (
+                     <Link href={`/dashboard/lesson/${module.id}`} className="w-full">
+                       <button className="btn-primary w-full py-2.5 text-sm shadow-primary/20">
+                         Start Lesson
+                       </button>
+                     </Link>
+                   )}
+                   
+                   {isCompleted && (
+                     <Link href={`/dashboard/lesson/${module.id}`} className="w-full">
+                       <button className="w-full py-2.5 text-sm font-bold text-slate-600 bg-slate-200 hover:bg-slate-300 rounded-xl transition-colors">
+                         Review Notes
+                       </button>
+                     </Link>
+                   )}
+                </div>
+                
+              </div>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
     </div>
   );
-};
-
-export default LearningPathTimeline;
+}

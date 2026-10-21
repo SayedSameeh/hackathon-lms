@@ -1,52 +1,53 @@
-import CTA from "@/components/CTA";
-import LearningPathTimeline from "@/components/LearningPathTimeline";
-import { getRecentSessions } from "@/lib/actions/companion.actions";
-import CompanionsList from "@/components/CompanionsList";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import GeneratePathForm from "@/components/GeneratePathForm";
+import LearningPathTimeline from "@/components/LearningPathTimeline";
 import { getActiveLearningPath } from "@/lib/actions/curriculum.actions";
+import { Sparkles } from "lucide-react";
 
 const DashboardPage = async () => {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
-  // Fetch the real data from Supabase
-  const recentSessionsCompanions = await getRecentSessions(10);
   const activePathData = await getActiveLearningPath();
 
   return (
-    <main>
-      {/* Generator Section */}
-      <section className="home-section flex-col items-center text-center py-12">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">What do you want to master today?</h1>
-        <p className="text-lg opacity-80 max-w-2xl mb-8">
-          Enter a topic or upload your university syllabus. We'll strip away the academic fluff and build a modern, industry-standard roadmap.
+    <div className="flex flex-col gap-10 pb-10">
+      
+      {/* Hero / Generator Section */}
+      <section className="flex flex-col items-center text-center py-12 px-4 bg-gradient-to-b from-slate-50 to-white rounded-3xl border border-slate-100 shadow-sm mt-2 relative overflow-hidden">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none -z-10" />
+
+        <div className="bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-bold flex items-center gap-2 mb-6">
+          <Sparkles className="w-4 h-4" />
+          AI-Powered Curriculum
+        </div>
+        
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-5">
+          Master any topic in <span className="text-primary">record time.</span>
+        </h1>
+        <p className="text-lg text-slate-500 max-w-2xl mb-10 font-medium leading-relaxed">
+          Drop a topic below or upload your syllabus. We'll strip away the academic fluff and build a modern, interactive roadmap tailored to how you think.
         </p>
         
         <GeneratePathForm />
       </section>
 
-      {/* Active Timeline (Only renders if a path exists) */}
+      {/* Active Timeline - The only thing that matters now */}
       {activePathData && activePathData.modules.length > 0 && (
-        <section className="home-section flex-col">
-          <LearningPathTimeline 
-            title={`Current Focus: ${activePathData.path.target_skill}`} 
-            modules={activePathData.modules} 
-          />
+        <section className="flex flex-col gap-6 mt-4">
+          <div className="flex items-center justify-between px-2">
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Your Active Journey</h2>
+            <span className="text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg capitalize">
+              {activePathData.path.target_skill}
+            </span>
+          </div>
+          
+          <LearningPathTimeline modules={activePathData.modules} />
         </section>
       )}
-
-      {/* Past Sessions */}
-      <section className="home-section flex-col mt-12 border-t pt-12">
-        <CompanionsList
-          title="Past Sessions"
-          companions={recentSessionsCompanions}
-          classNames="w-2/3 max-lg:w-full"
-        />
-        <CTA />
-      </section>
-    </main>
+      
+    </div>
   );
 };
 
