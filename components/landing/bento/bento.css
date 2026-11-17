@@ -1,0 +1,51 @@
+/* Bento tiles: Converso's look on the dark theme, shared by every Stage in the grid.
+   Orange is the one lit colour; depth comes from surface steps, not shadow. */
+.bt .ss-stage {
+  --ss-accent: #fe5933;
+  --ss-accent-soft: rgba(254, 89, 51, 0.16);
+  --ss-accent-text: #ff8a6b;
+  --ss-font: var(--font-sans), "Inter", system-ui, sans-serif;
+  --ss-radius-md: 10px;
+  background: transparent;
+  overflow: hidden;
+}
+
+/* The picture slot sits on the tile floor and bleeds off the tile edge */
+.bt-slot { position: relative; margin-top: auto; }
+.bt-fade { mask-image: linear-gradient(180deg, #000 55%, transparent 100%); }
+
+.bt-win { position: absolute; top: 0; left: 28px; width: 568px; height: 560px; box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06); }
+.bt-eyebrow { color: var(--ss-text-faint); font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.bt-ptitle { margin: 4px 0 14px; color: var(--ss-text-strong); font-size: 17px; font-weight: 600; }
+
+.bt-mod { display: flex; align-items: center; gap: 12px; height: 46px; padding: 0 12px; border-radius: 10px; color: var(--ss-text); font-size: 14px; }
+.bt-mod[data-now] { background: var(--ss-surface-raised, rgb(255 255 255 / 0.06)); color: var(--ss-text-strong); font-weight: 600; }
+.bt-mod .grow { flex: 1; min-width: 0; }
+.bt-lock { display: grid; place-items: center; width: 16px; height: 16px; border-radius: 99px; border: 1.5px solid var(--ss-line-strong, rgb(255 255 255 / 0.22)); }
+
+.bt-bar { height: 6px; border-radius: 99px; background: rgb(255 255 255 / 0.1); overflow: hidden; }
+.bt-bar > i { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--ss-accent); transition: width 1.4s var(--ease-out) 0.4s; }
+.reveal.is-in .bt-bar > i { width: var(--w, 60%); }
+
+.bt-orb { display: flex; align-items: center; justify-content: center; gap: 3px; width: 64px; height: 64px; border-radius: 99px; background: var(--ss-accent); flex: none; }
+.bt-orb i { width: 3px; border-radius: 99px; background: #fff; animation: bt-eq 1.1s var(--ease-in-out) infinite; }
+.bt-orb i:nth-child(1) { height: 14px; animation-delay: -0.9s; } .bt-orb i:nth-child(2) { height: 26px; animation-delay: -0.5s; }
+.bt-orb i:nth-child(3) { height: 18px; animation-delay: -0.2s; } .bt-orb i:nth-child(4) { height: 28px; animation-delay: -0.7s; } .bt-orb i:nth-child(5) { height: 12px; animation-delay: -0.35s; }
+@keyframes bt-eq { 0%, 100% { transform: scaleY(0.45); } 50% { transform: scaleY(1); } }
+
+.bt-doc { position: absolute; top: 0; left: 28px; width: 540px; padding: 18px 20px; border-radius: 14px 14px 0 0; background: var(--ss-surface); border: 1px solid var(--ss-line); border-bottom: 0; }
+.bt-doc h4 { margin: 6px 0 10px; color: var(--ss-text-strong); font-size: 16px; font-weight: 600; }
+.bt-doc li { display: flex; gap: 10px; align-items: flex-start; margin-top: 8px; color: var(--ss-text); font-size: 13.5px; line-height: 1.4; }
+.bt-doc li::before { content: ""; flex: none; width: 5px; height: 5px; margin-top: 7px; border-radius: 99px; background: var(--ss-accent); }
+
+.bt-row { display: flex; align-items: center; gap: 12px; height: 54px; padding: 0 16px; margin: 0 28px; border-bottom: 1px solid var(--ss-line); }
+.bt-row b { color: var(--ss-text-strong); font-size: 14px; font-weight: 600; display: block; }
+.bt-row span.sub { color: var(--ss-text-faint); font-size: 12px; }
+.bt-row .meta { margin-left: auto; color: var(--ss-text-faint); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+.bt-ring { transform: rotate(-90deg); }
+.bt-ring circle { fill: none; stroke-width: 10; stroke-linecap: round; }
+.bt-ring .trk { stroke: rgb(255 255 255 / 0.08); }
+.bt-ring .val { stroke: var(--bt-accent, #fe5933); stroke-dasharray: 289; stroke-dashoffset: 289; transition: stroke-dashoffset 1.4s var(--ease-out) 0.3s; }
+.reveal.is-in .bt-ring .val { stroke-dashoffset: calc(289 * (1 - var(--p, 0.5))); }
+@media (prefers-reduced-motion: reduce) { .bt-orb i { animation: none; } .bt-bar > i, .bt-ring .val { transition: none; } }

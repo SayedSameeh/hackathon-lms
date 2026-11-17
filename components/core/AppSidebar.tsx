@@ -71,7 +71,7 @@ export function AppSidebar() {
                     <Link
                       href={item.url}
                       className={cn(
-                        "flex items-center gap-3 font-semibold text-base py-3 px-4 rounded-xl transition-all duration-200",
+                        "group flex items-center gap-3 font-semibold text-base py-3 px-4 rounded-xl transition-[background-color,color,transform] duration-200 active:scale-[0.98]",
                         isActive
                           ? "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary"
                           : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
@@ -79,7 +79,7 @@ export function AppSidebar() {
                     >
                       <item.icon
                         className={cn(
-                          "h-5 w-5",
+                          "h-5 w-5 transition-transform duration-200 group-hover:scale-110",
                           isActive ? "text-primary" : "text-slate-400",
                         )}
                       />

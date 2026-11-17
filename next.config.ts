@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
     eslint: {
         ignoreDuringBuilds: true
     },
+  experimental: {
+      agentUpgrade: "security"
+  },
   images: {
       remotePatterns: [
           { hostname: 'img.clerk.com'}

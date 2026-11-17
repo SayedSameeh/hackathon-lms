@@ -1,0 +1,433 @@
+/* Converso's look on the dark theme: its orange is the one lit color, the
+   window steps up from the page, depth from surfaces, not shadow. */
+.cv {
+  & .ss-stage {
+    --ss-accent: #fe5933;
+    --ss-accent-soft: rgba(254, 89, 51, 0.16);
+    --ss-accent-text: #ff8a6b;
+    --ss-font: var(--font-sans), "Inter", system-ui, sans-serif;
+    --ss-radius-md: 10px;
+    --gutter: 40px;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  /* Wide hero: inset top and left, off the right and the bottom */
+  .cv-win {
+    position: absolute;
+    top: var(--gutter);
+    /* A gutter plus half the notes card, so the card straddles the edge */
+    left: calc(var(--gutter) + 142px);
+    width: 920px;
+    height: 600px;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), var(--ss-shadow-hero);
+  }
+
+  .cv-app {
+    display: flex;
+    height: 100%;
+    background: var(--ss-surface);
+  }
+
+  .cv-eyebrow {
+    color: var(--ss-text-faint);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ---- The learning path ---- */
+
+  .cv-path {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    width: 216px;
+    padding: 20px 16px;
+    background: var(--ss-canvas);
+    border-right: 1px solid var(--ss-line);
+  }
+
+  .cv-path-title {
+    margin-top: 4px;
+    margin-bottom: 16px;
+    color: var(--ss-text-strong);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .cv-modules {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cv-mod {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: var(--ss-radius-sm);
+    color: var(--ss-text);
+    font-size: 13px;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .cv-mod[data-now] {
+    background: var(--ss-ink-2);
+    color: var(--ss-text-strong);
+  }
+
+  .cv-mod-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .cv-node > * {
+    grid-area: 1 / 1;
+    transition: opacity 0.3s ease, scale 0.3s ease;
+  }
+
+  .cv-node > svg,
+  .cv-node:not([data-locked]) > svg { opacity: 0; scale: 0.6; }
+  .cv-node[data-locked] > svg { opacity: 1; scale: 1; }
+  .cv-node[data-locked] > .ss-check { opacity: 0; scale: 0.6; }
+
+  .cv-node {
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    color: var(--ss-icon-faint);
+  }
+
+  .cv-mod[data-now] .ss-check__ring {
+    stroke: var(--ss-accent);
+  }
+
+  .ss-check__fill {
+    fill: var(--ss-accent);
+  }
+
+  /* ---- The session ---- */
+
+  .cv-main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    padding: 24px 88px 0 32px;
+  }
+
+  .cv-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--ss-line-faint);
+  }
+
+  .cv-head-text {
+    display: grid;
+    justify-items: start;
+    gap: 4px;
+  }
+
+  .cv-title {
+    color: var(--ss-text-strong);
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .cv-interest {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    padding: 4px 10px;
+    border-radius: var(--ss-radius-pill);
+    background: var(--ss-ink-1);
+    box-shadow: inset 0 0 0 1px var(--ss-line);
+    color: var(--ss-text);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .cv-interest svg {
+    color: var(--ss-accent);
+  }
+
+  .cv-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 2px;
+  }
+
+  .cv-live {
+    min-width: 0;
+  }
+
+  .cv-time {
+    color: var(--ss-text);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cv-thread {
+    display: grid;
+    align-content: start;
+    gap: 22px;
+    padding-top: 24px;
+  }
+
+  .cv-q {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .cv-q .ss-text {
+    padding: 9px 14px;
+    border-radius: 16px 16px 4px 16px;
+    background: var(--ss-raised);
+    color: var(--ss-text-strong);
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .cv-tutor {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+
+  /* The tutor's voice: an orange disc whose bars move only while it speaks */
+  .cv-orb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ff8a6b, var(--ss-accent) 60%, #d9401d);
+    box-shadow: 0 0 0 0 rgba(254, 89, 51, 0);
+    transition: box-shadow 0.6s ease;
+  }
+
+  .cv-orb[data-speaking] {
+    box-shadow: 0 0 0 6px rgba(254, 89, 51, 0.14), 0 0 28px 4px rgba(254, 89, 51, 0.35);
+  }
+
+  .cv-orb i {
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
+    background: #fff;
+    transform: scaleY(0.3);
+    transition: transform 0.4s ease;
+  }
+
+  .cv-orb i:nth-child(odd) { height: 10px; }
+
+  .cv-orb[data-speaking] i {
+    animation: cv-wave 0.9s ease-in-out infinite alternate;
+  }
+
+  .cv-answer {
+    display: grid;
+    gap: 6px;
+    padding-top: 2px;
+  }
+
+  .cv-who {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ss-text-strong);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .cv-speaking {
+    color: var(--ss-accent-text);
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .cv-speaking[data-on] {
+    opacity: 1;
+  }
+
+  .cv-stream {
+    color: var(--ss-text-strong);
+    font-size: 16px;
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  .cv-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 36px;
+  }
+
+  /* ---- The notes, written when the session ends ---- */
+
+  .cv-notes {
+    position: absolute;
+    left: var(--gutter);
+    top: 292px;
+    z-index: 5;
+    display: grid;
+    gap: 10px;
+    width: 284px;
+    padding: 16px;
+    border-radius: 14px;
+    background: var(--ss-raised);
+    box-shadow: var(--ss-shadow-satellite);
+    opacity: 0;
+    translate: 0 16px;
+    scale: 0.98;
+    will-change: transform;
+    transition:
+      opacity 0.6s cubic-bezier(0.25, 0.8, 0.25, 1),
+      translate 0.9s cubic-bezier(0.25, 0.8, 0.25, 1),
+      scale 0.9s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .cv-notes[data-on] {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+
+  .cv-notes-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ss-accent-text);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .cv-notes-meta {
+    margin-left: auto;
+    color: var(--ss-text-faint);
+    font-weight: 500;
+  }
+
+  .cv-notes-title {
+    color: var(--ss-text-strong);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .cv-notes-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cv-notes-list li {
+    position: relative;
+    padding-left: 14px;
+    color: var(--ss-text);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .cv-notes-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--ss-accent);
+  }
+
+  .cv-notes-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--ss-line);
+    color: var(--ss-text);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* ---- Compact: the lesson on a phone, notes rising over its foot ---- */
+
+  & .ss-stage[data-layout='compact'] {
+    --gutter: 16px;
+  }
+
+  .cv-phone {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+  }
+
+  .cv-phone .cv-app {
+    height: 100%;
+  }
+
+  & .ss-stage[data-layout='compact'] .cv-main { padding: 58px 16px 0; }
+  & .ss-stage[data-layout='compact'] .cv-head { padding-bottom: 16px; }
+  & .ss-stage[data-layout='compact'] .cv-title { font-size: 22px; }
+  & .ss-stage[data-layout='compact'] .cv-stream { font-size: 16px; }
+  & .ss-stage[data-layout='compact'] .cv-thread { gap: 16px; padding-top: 18px; }
+  & .ss-stage[data-layout='compact'] .cv-q .ss-text { font-size: 15px; }
+  & .ss-stage[data-layout='compact'] .cv-time { display: none; }
+  & .ss-stage[data-layout='compact'] .cv-tutor { grid-template-columns: 36px minmax(0, 1fr); gap: 12px; }
+  & .ss-stage[data-layout='compact'] .cv-orb { width: 36px; height: 36px; }
+  /* Controls sit low, where a thumb reaches; the notes sheet rises over them */
+  & .ss-stage[data-layout='compact'] .cv-main { position: relative; height: 100%; }
+  & .ss-stage[data-layout='compact'] .cv-controls { position: absolute; top: 590px; left: 0; right: 0; margin: 0; }
+  & .ss-stage[data-layout='compact'] .cv-eyebrow { font-size: 14px; }
+  & .ss-stage[data-layout='compact'] .cv-live { font-size: 14px; }
+  & .ss-stage[data-layout='compact'] .cv-interest { font-size: 14px; }
+  & .ss-stage[data-layout='compact'] .cv-who { font-size: 16px; }
+  & .ss-stage[data-layout='compact'] .cv-speaking { font-size: 14px; }
+  & .ss-stage[data-layout='compact'] .cv-mic { display: none; }
+
+  & .ss-stage[data-layout='compact'] .cv-notes {
+    left: 40px;
+    right: 40px;
+    top: auto;
+    bottom: 24px;
+    width: auto;
+  }
+}
+
+@keyframes cv-wave {
+  from { transform: scaleY(0.35); }
+  to { transform: scaleY(1); }
+}
+
+/* The phone's sheet keeps one takeaway, so the answer above stays whole */
+.cv .ss-stage[data-layout='compact'] .cv-notes-list li:nth-child(2),
+.cv .ss-stage[data-layout='compact'] .cv-notes-foot { display: none; }
