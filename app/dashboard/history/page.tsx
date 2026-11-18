@@ -1,96 +1,67 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
+import { getUserPaths } from "@/lib/actions/curriculum.actions";
+import { learningStats } from "@/lib/progress";
 import {
-  getUserCompanions,
-  getUserSessions,
-  getBookmarkedCompanions,
-} from "@/lib/actions/companion.actions";
-import CompanionsList from "@/components/CompanionsList";
-import { History, CheckCircle2, Bot } from "lucide-react";
+  Card,
+  EmptyState,
+  ModuleRow,
+  PageHeader,
+} from "@/components/dashboard";
 
 export default async function HistoryPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
 
-  const companions = await getUserCompanions(user.id);
-  const sessionHistory = await getUserSessions(user.id);
-  const bookmarkedCompanions = await getBookmarkedCompanions(user.id);
+  const paths = await getUserPaths();
+  const stats = learningStats(paths);
+  const finished = paths
+    .map(({ path, modules }) => ({
+      path,
+      modules: modules.filter((m) => m.is_completed),
+    }))
+    .filter((p) => p.modules.length > 0);
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-6xl pb-10">
-      
-      {/* Header */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="bg-primary/10 p-2 rounded-xl">
-            <History className="w-6 h-6 text-primary" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
-            Session History
-          </h1>
-        </div>
-        <p className="text-slate-500 font-medium text-lg max-w-2xl">
-          Review your past lessons, generated mentors, and overall progress.
-        </p>
-      </div>
+    <div className="flex flex-col gap-8 max-w-4xl w-full">
+      <PageHeader
+        title="Session history"
+        description={
+          stats.completed
+            ? `${stats.completed} lessons completed, ${stats.minutes} minutes learned. Open one to read its notes.`
+            : "Lessons you finish will be listed here with their notes."
+        }
+      />
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl mb-4">
-        
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-5">
-          <div className="bg-emerald-100 p-4 rounded-full text-emerald-600">
-            <CheckCircle2 className="w-8 h-8" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
-              {sessionHistory.length}
-            </span>
-            <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">
-              Lessons Completed
-            </span>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-5">
-          <div className="bg-blue-100 p-4 rounded-full text-blue-600">
-            <Bot className="w-8 h-8" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
-              {companions.length}
-            </span>
-            <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">
-              Mentors Created
-            </span>
-          </div>
-        </div>
-
-      </div>
-
-      {/* Unified Lists */}
-      <div className="flex flex-col gap-12">
-        {sessionHistory.length > 0 && (
-          <section className="flex flex-col gap-4">
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight px-1">Recent Sessions</h2>
-            <CompanionsList title="" companions={sessionHistory} classNames="w-full" />
+      {finished.length === 0 ? (
+        <EmptyState
+          title="No finished sessions yet"
+          body="Complete a voice lesson and it lands here with auto-generated notes."
+          href="/dashboard"
+          cta="Go to your next lesson"
+        />
+      ) : (
+        finished.map(({ path, modules }) => (
+          <section key={path.id} className="flex flex-col gap-3">
+            <h2 className="text-lg font-bold text-zinc-900 capitalize">
+              {path.target_skill}
+            </h2>
+            <Card className="py-3">
+              {modules.map((m) => (
+                <ModuleRow
+                  key={m.id}
+                  id={m.id}
+                  order={m.module_order}
+                  name={m.name}
+                  duration={m.duration}
+                  done
+                  hasNotes={!!m.session_notes}
+                />
+              ))}
+            </Card>
           </section>
-        )}
-
-        {companions.length > 0 && (
-          <section className="flex flex-col gap-4">
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight px-1">My Custom Mentors</h2>
-            <CompanionsList title="" companions={companions} classNames="w-full" />
-          </section>
-        )}
-
-        {bookmarkedCompanions.length > 0 && (
-          <section className="flex flex-col gap-4">
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight px-1">Bookmarked Mentors</h2>
-            <CompanionsList title="" companions={bookmarkedCompanions} classNames="w-full" />
-          </section>
-        )}
-      </div>
-
+        ))
+      )}
     </div>
   );
 }

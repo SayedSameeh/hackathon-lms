@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createLearningPath } from '@/lib/actions/curriculum.actions';
-import { Loader2, Target, Lightbulb, ArrowRight } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
 
-export default function GeneratePathForm() {
+export default function GeneratePathForm({ defaultInterest = '' }: { defaultInterest?: string }) {
   const [topic, setTopic] = useState('');
-  const [interest, setInterest] = useState('');
+  const [interest, setInterest] = useState(defaultInterest);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const handleGenerate = async (e: React.FormEvent) => {
@@ -17,67 +18,68 @@ export default function GeneratePathForm() {
 
     try {
       setIsGenerating(true);
-      await createLearningPath(topic, interest);
+      setError('');
+      await createLearningPath(topic.trim(), interest.trim());
       setTopic('');
-      setInterest('');
-      router.refresh(); 
-    } catch (error) {
-      console.error("Failed to generate path", error);
+      router.refresh();
+    } catch (err) {
+      console.error('Failed to generate path', err);
+      setError('Could not build your path. Please try again.');
     } finally {
       setIsGenerating(false);
     }
   };
 
   return (
-    <form onSubmit={handleGenerate} className="flex flex-col w-full max-w-3xl gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
-      <div className="flex w-full gap-4 max-sm:flex-col">
-        
-        {/* Topic Input */}
-        <div className="relative flex-[3]">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <Target className="h-5 w-5 text-slate-400" />
-          </div>
-          <input 
-            type="text" 
+    <form
+      onSubmit={handleGenerate}
+      className="flex flex-col gap-4 rounded-2xl border border-stone-200 bg-white p-6"
+    >
+      <div className="grid gap-4 md:grid-cols-[3fr_2fr]">
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-zinc-700">
+          What do you want to learn?
+          <input
+            type="text"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            placeholder="What do you want to learn? (e.g. Next.js Architecture)" 
-            className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-semibold placeholder:font-medium placeholder:text-slate-400"
+            placeholder="e.g. Next.js architecture"
+            className="input"
             disabled={isGenerating}
           />
-        </div>
-        
-        {/* Interest Input */}
-        <div className="relative flex-[2]">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <Lightbulb className="h-5 w-5 text-slate-400" />
-          </div>
-          <input 
-            type="text" 
+        </label>
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-zinc-700">
+          Explain it through
+          <input
+            type="text"
             value={interest}
             onChange={(e) => setInterest(e.target.value)}
-            placeholder="Analogy (e.g. Formula 1, Cooking)" 
-            className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-semibold placeholder:font-medium placeholder:text-slate-400"
+            placeholder="e.g. Formula 1, cooking"
+            className="input"
             disabled={isGenerating}
           />
-        </div>
+        </label>
       </div>
-      
-      {/* Submit Button */}
-      <button 
-        type="submit" 
+
+      {error && (
+        <p role="alert" className="text-sm text-red-600">
+          {error}
+        </p>
+      )}
+
+      <button
+        type="submit"
         disabled={isGenerating || !topic.trim()}
-        className="btn-primary w-full py-4 text-lg mt-2 group"
+        className="btn-primary w-full md:w-fit md:self-end"
       >
         {isGenerating ? (
           <>
-            <Loader2 className="w-5 h-5 animate-spin mr-2" />
-            Architecting your curriculum...
+            <Loader2 className="size-4 animate-spin mr-2" aria-hidden />
+            Building your path…
           </>
         ) : (
           <>
-            Generate Personalized Path
-            <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
+            Generate path
+            <ArrowRight className="size-4 ml-2" aria-hidden />
           </>
         )}
       </button>

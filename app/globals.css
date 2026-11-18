@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -44,6 +45,14 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+
+  /* Dashboard sidebar: dark panel, used by components/ui/sidebar.tsx */
+  --color-sidebar: #09090b;
+  --color-sidebar-foreground: #d4d4d8;
+  --color-sidebar-border: rgb(255 255 255 / 0.1);
+  --color-sidebar-accent: rgb(255 255 255 / 0.08);
+  --color-sidebar-accent-foreground: #ffffff;
+  --color-sidebar-ring: hsl(var(--primary));
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
   
@@ -105,10 +114,10 @@ body {
     @apply border-2 border-primary/20 bg-white shadow-sm w-2/3 max-sm:w-full flex flex-col gap-6 justify-center items-center rounded-2xl p-8;
   }
   .companion-avatar {
-    @apply size-[240px] flex items-center justify-center rounded-2xl max-sm:size-[120px] mt-4 shadow-inner relative overflow-hidden;
+    @apply size-60 flex items-center justify-center rounded-2xl max-sm:size-30 mt-4 shadow-inner relative overflow-hidden;
   }
   .companion-lottie {
-    @apply size-[300px] max-sm:size-[150px] absolute inset-0 m-auto mix-blend-multiply;
+    @apply size-75 max-sm:size-37.5 absolute inset-0 m-auto mix-blend-multiply;
   }
 
   /* User Controls */
@@ -124,13 +133,13 @@ body {
 
   /* Transcripts */
   .transcript {
-    @apply relative flex flex-col w-full h-full min-h-[300px] bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden;
+    @apply relative flex flex-col w-full h-full min-h-75 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden;
   }
   .transcript-message {
     @apply overflow-y-auto w-full flex flex-col gap-6 p-6 h-full text-lg leading-relaxed;
   }
   .transcript-fade {
-    @apply pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent;
+    @apply pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-linear-to-t from-white to-transparent;
   }
   
   /* Badges */

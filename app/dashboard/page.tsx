@@ -1,54 +1,131 @@
-import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { ArrowRight, Clock } from "lucide-react";
+import { getUserPaths } from "@/lib/actions/curriculum.actions";
+import { learningStats, pathProgress } from "@/lib/progress";
 import GeneratePathForm from "@/components/GeneratePathForm";
-import LearningPathTimeline from "@/components/LearningPathTimeline";
-import { getActiveLearningPath } from "@/lib/actions/curriculum.actions";
-import { Sparkles } from "lucide-react";
+import {
+  Card,
+  ModuleRow,
+  PageHeader,
+  ProgressBar,
+} from "@/components/dashboard";
 
-const DashboardPage = async () => {
-  const { userId } = await auth();
-  if (!userId) redirect("/sign-in");
+export default async function DashboardPage() {
+  const user = await currentUser();
+  if (!user) redirect("/sign-in");
 
-  const activePathData = await getActiveLearningPath();
+  const paths = await getUserPaths();
+  const interest = (user.unsafeMetadata?.interest as string) ?? "";
+
+  if (paths.length === 0) {
+    return (
+      <div className="flex flex-col gap-8 max-w-3xl w-full">
+        <PageHeader
+          title={`Welcome${user.firstName ? `, ${user.firstName}` : ""}`}
+          description="Tell us what you want to learn and we'll build a short path of voice lessons around it."
+        />
+        <GeneratePathForm defaultInterest={interest} />
+      </div>
+    );
+  }
+
+  const stats = learningStats(paths);
+  // Active path = newest path that still has something left to learn
+  const active =
+    paths.find((p) => pathProgress(p.modules).next) ?? paths[0];
+  const { next, percent, done, total } = pathProgress(active.modules);
+
+  const tiles = [
+    { label: "Lessons completed", value: `${stats.completed}/${stats.total}` },
+    { label: "Minutes learned", value: stats.minutes },
+    { label: "Learning paths", value: stats.paths },
+    { label: "Overall progress", value: `${stats.percent}%` },
+  ];
 
   return (
-    <div className="flex flex-col gap-10 pb-10">
-      
-      {/* Hero / Generator Section */}
-      <section className="flex flex-col items-center text-center py-12 px-4 bg-gradient-to-b from-slate-50 to-white rounded-3xl border border-slate-100 shadow-sm mt-2 relative overflow-hidden">
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none -z-10" />
+    <div className="flex flex-col gap-8 max-w-5xl w-full">
+      <PageHeader
+        title={`Hi${user.firstName ? `, ${user.firstName}` : ""}`}
+        description="Pick up where you left off."
+      />
 
-        <div className="bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-bold flex items-center gap-2 mb-6">
-          <Sparkles className="w-4 h-4" />
-          AI-Powered Curriculum
-        </div>
-        
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-5">
-          Master any topic in <span className="text-primary">record time.</span>
-        </h1>
-        <p className="text-lg text-slate-500 max-w-2xl mb-10 font-medium leading-relaxed">
-          Drop a topic below or upload your syllabus. We'll strip away the academic fluff and build a modern, interactive roadmap tailored to how you think.
-        </p>
-        
-        <GeneratePathForm />
-      </section>
+      <dl className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {tiles.map((t) => (
+          <Card key={t.label} className="p-5">
+            <dt className="text-sm text-zinc-500">{t.label}</dt>
+            <dd className="mt-1 text-3xl font-bold tracking-tight tabular-nums text-zinc-900">
+              {t.value}
+            </dd>
+          </Card>
+        ))}
+      </dl>
 
-      {/* Active Timeline - The only thing that matters now */}
-      {activePathData && activePathData.modules.length > 0 && (
-        <section className="flex flex-col gap-6 mt-4">
-          <div className="flex items-center justify-between px-2">
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Your Active Journey</h2>
-            <span className="text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg capitalize">
-              {activePathData.path.target_skill}
+      {next ? (
+        <section className="rounded-2xl bg-[#09090b] p-8 text-white flex flex-col gap-5">
+          <p className="text-sm font-medium text-primary">Up next</p>
+          <div className="flex flex-col gap-2">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+              {next.name}
+            </h2>
+            <p className="text-zinc-400 max-w-2xl">{next.topic}</p>
+          </div>
+          <div className="flex items-center gap-6 max-sm:flex-col max-sm:items-start">
+            <Link href={`/dashboard/lesson/${next.id}`} className="btn-primary">
+              Start lesson
+              <ArrowRight className="size-4 ml-2" aria-hidden />
+            </Link>
+            <span className="flex items-center gap-1.5 text-sm text-zinc-400">
+              <Clock className="size-4" aria-hidden />
+              {next.duration} min
             </span>
           </div>
-          
-          <LearningPathTimeline modules={activePathData.modules} />
         </section>
+      ) : (
+        <Card className="flex items-center justify-between gap-4 max-sm:flex-col max-sm:items-start">
+          <div>
+            <h2 className="text-xl font-bold text-zinc-900">Path complete</h2>
+            <p className="text-zinc-600">
+              You finished every lesson in {active.path.target_skill}.
+            </p>
+          </div>
+          <Link href="/dashboard/lesson" className="btn-primary">
+            Start a new path
+          </Link>
+        </Card>
       )}
-      
+
+      <section className="flex flex-col gap-4">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 className="text-xl font-bold tracking-tight text-zinc-900 capitalize">
+            {active.path.target_skill}
+          </h2>
+          <span className="text-sm text-zinc-500 tabular-nums">
+            {done} of {total} lessons
+          </span>
+        </div>
+        <ProgressBar percent={percent} />
+        <Card className="py-3">
+          {active.modules.map((m) => (
+            <ModuleRow
+              key={m.id}
+              id={m.id}
+              order={m.module_order}
+              name={m.name}
+              duration={m.duration}
+              done={m.is_completed}
+              hasNotes={!!m.session_notes}
+            />
+          ))}
+        </Card>
+        <Link
+          href="/dashboard/lesson"
+          className="text-sm font-semibold text-primary hover:underline w-fit"
+        >
+          All paths and new path
+        </Link>
+      </section>
     </div>
   );
-};
-
-export default DashboardPage;
+}

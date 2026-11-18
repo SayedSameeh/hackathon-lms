@@ -2,88 +2,71 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import {
-  BookOpen,
-  History,
-  LayoutDashboard,
-  PlusCircle,
-  Settings,
-  Sparkles,
-} from "lucide-react";
+import { BookOpen, History, LayoutDashboard, Sparkles, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { title } from "process";
 
-// Menu items
 const items = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "New Companion", url: "/dashboard/new", icon: PlusCircle },
-  { title: "My Lessons", url: "/dashboard/lesson", icon: BookOpen },
-  { title: "Session History", url: "/dashboard/history", icon: History },
-  { title: "Settings", url: "/dashboard/settings", icon: Settings },
+  { title: "Overview", url: "/dashboard", icon: LayoutDashboard },
+  { title: "My lessons", url: "/dashboard/lesson", icon: BookOpen },
+  { title: "Session history", url: "/dashboard/history", icon: History },
+  { title: "Profile", url: "/dashboard/profile", icon: UserRound },
 ];
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
+
+  // "/dashboard" must only match itself; the others also own their sub-routes
+  const isActive = (url: string) =>
+    url === "/dashboard" ? pathname === url : pathname.startsWith(url);
 
   return (
-    <Sidebar className="border-r border-slate-200 bg-white">
-      {/* HEADER */}
-      <SidebarHeader className="p-6 border-b border-slate-100 bg-white">
-        <Link
-          href="/dashboard"
-          className="flex items-center gap-2 transition-opacity hover:opacity-80"
-        >
-          <div className="bg-primary/10 p-1.5 rounded-lg">
-            <Sparkles className="w-5 h-5 text-primary" />
-          </div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
-            Converso<span className="text-primary">.</span>
-          </h2>
+    <Sidebar className="border-r border-white/10 bg-[#09090b] text-zinc-300">
+      <SidebarHeader className="px-6 pt-7 pb-4">
+        <Link href="/dashboard" className="flex items-center gap-2.5 w-fit">
+          <span className="grid size-8 place-items-center rounded-lg bg-primary">
+            <Sparkles className="size-4 text-white" aria-hidden />
+          </span>
+          <span className="text-xl font-bold tracking-tight text-white">
+            Converso
+          </span>
         </Link>
       </SidebarHeader>
 
-      {/* CONTENT */}
-      <SidebarContent className="bg-white pt-4">
+      <SidebarContent className="bg-transparent px-3 pt-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 px-4">
-            Learning Hub
-          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="gap-2 px-2">
+            <SidebarMenu className="gap-1">
               {items.map((item) => {
-                const isActive = pathname === item.url;
+                const active = isActive(item.url);
                 return (
                   <SidebarMenuItem key={item.title}>
-                    {/* We bypassed SidebarMenuButton and styled the Link directly */}
                     <Link
                       href={item.url}
+                      aria-current={active ? "page" : undefined}
                       className={cn(
-                        "group flex items-center gap-3 font-semibold text-base py-3 px-4 rounded-xl transition-[background-color,color,transform] duration-200 active:scale-[0.98]",
-                        isActive
-                          ? "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary"
-                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
+                        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors duration-150",
+                        active
+                          ? "bg-white/10 text-white"
+                          : "text-zinc-400 hover:bg-white/5 hover:text-white",
                       )}
                     >
                       <item.icon
-                        className={cn(
-                          "h-5 w-5 transition-transform duration-200 group-hover:scale-110",
-                          isActive ? "text-primary" : "text-slate-400",
-                        )}
+                        className={cn("size-[18px]", active && "text-primary")}
+                        aria-hidden
                       />
-                      <span>{item.title}</span>
+                      {item.title}
                     </Link>
                   </SidebarMenuItem>
                 );
@@ -93,20 +76,21 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* FOOTER */}
-      <SidebarFooter className="p-4 border-t border-slate-100 mt-auto bg-slate-50/50">
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-white border border-slate-200 shadow-sm transition-all hover:shadow-md">
-          <UserButton
-            afterSignOutUrl="/"
-            appearance={{ elements: { avatarBox: "w-9 h-9" } }}
-          />
-          <div className="flex flex-col">
-            <span className="text-sm font-bold text-slate-900">Account</span>
-            <span className="text-xs font-medium text-slate-500">
-              Manage Profile
+      <SidebarFooter className="p-3">
+        <Link
+          href="/dashboard/profile"
+          className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-white/5"
+        >
+          <UserButton appearance={{ elements: { avatarBox: "size-9" } }} />
+          <span className="min-w-0 flex flex-col">
+            <span className="truncate text-sm font-semibold text-white">
+              {user?.fullName || "Your account"}
             </span>
-          </div>
-        </div>
+            <span className="truncate text-xs text-zinc-500">
+              {user?.primaryEmailAddress?.emailAddress}
+            </span>
+          </span>
+        </Link>
       </SidebarFooter>
     </Sidebar>
   );

@@ -8,20 +8,15 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-white">
+      <div className="flex min-h-screen w-full bg-[#faf7f2]">
         <AppSidebar />
-        <main className="flex-1 flex flex-col min-w-0">
-          {/* Mobile trigger & top bar */}
-          <div className="md:hidden flex items-center p-4 border-b border-slate-200">
-            <SidebarTrigger />
-            <span className="ml-4 font-bold text-slate-900">Converso</span>
+        <div className="flex-1 flex flex-col min-w-0">
+          <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-stone-200 bg-[#faf7f2]">
+            <SidebarTrigger aria-label="Open navigation" />
+            <span className="font-bold text-zinc-900">Converso</span>
           </div>
-          
-          {/* Main Page Content */}
-          <div className="page-in flex-1 overflow-y-auto p-4 md:p-8">
-            {children}
-          </div>
-        </main>
+          <div className="page-in flex-1 p-4 md:p-10">{children}</div>
+        </div>
       </div>
     </SidebarProvider>
   );

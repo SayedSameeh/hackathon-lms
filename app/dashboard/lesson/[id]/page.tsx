@@ -2,6 +2,7 @@ import { getPathModule } from "@/lib/actions/curriculum.actions";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import CompanionComponent from "@/components/CompanionComponent";
+import SessionNotes from "@/components/SessionNotes";
 import Link from "next/link";
 import { ArrowLeft, Clock } from "lucide-react";
 
@@ -9,62 +10,74 @@ interface LessonPageProps {
     params: Promise<{ id: string }>;
 }
 
+const pick = <T extends string>(value: unknown, allowed: readonly T[], fallback: T): T =>
+    allowed.includes(value as T) ? (value as T) : fallback;
+
 const LessonPage = async ({ params }: LessonPageProps) => {
     const { id } = await params;
     const user = await currentUser();
-    
+
     if (!user) redirect('/sign-in');
 
-    // Strip the "module-" prefix we added in the timeline link
-    const cleanId = id.replace('module-', '');
-    const moduleData = await getPathModule(cleanId);
+    // Strip the "module-" prefix older links carried
+    const moduleData = await getPathModule(id.replace('module-', ''));
+
+    // Tutor voice and style come from the profile page
+    const voice = pick(user.unsafeMetadata?.voice, ['male', 'female'] as const, 'male');
+    const style = pick(user.unsafeMetadata?.style, ['casual', 'formal'] as const, 'casual');
+
+    const session = (
+        <CompanionComponent
+            moduleId={moduleData.id}
+            subject="coding" // Default subject styling for now
+            topic={moduleData.topic}
+            name="AI Mentor"
+            userName={user.firstName!}
+            userImage={user.imageUrl!}
+            style={style}
+            voice={voice}
+            userInterest={moduleData.learning_paths?.user_interest || 'general real-world applications'}
+        />
+    );
 
     return (
-        <main className="w-full flex flex-col gap-6">
-            
-            {/* Clean Back Navigation */}
-            <Link href="/dashboard" className="inline-flex items-center gap-2 font-semibold text-slate-500 hover:text-primary transition-colors w-fit">
-                <ArrowLeft className="w-4 h-4" />
-                Back to Curriculum
+        <div className="flex flex-col gap-6 max-w-5xl w-full">
+            <Link href="/dashboard/lesson" className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-600 hover:text-primary transition-colors w-fit">
+                <ArrowLeft className="size-4" aria-hidden />
+                My lessons
             </Link>
 
-            {/* Redesigned Header Card */}
-            <article className="flex rounded-2xl border border-slate-200 bg-white p-8 shadow-sm justify-between items-start max-md:flex-col max-md:gap-6">
-                <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
-                        <span className="bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg">
-                            Module {moduleData.module_order}
-                        </span>
-                        <h1 className="font-extrabold text-3xl text-slate-900 tracking-tight">
-                            {moduleData.name}
-                        </h1>
-                    </div>
-                    <p className="text-lg text-slate-500 font-medium pl-1 max-w-2xl">
-                        {moduleData.topic}
-                    </p>
+            <header className="flex items-start justify-between gap-6 max-md:flex-col">
+                <div className="flex flex-col gap-2">
+                    <span className="text-sm font-semibold text-primary">
+                        Lesson {moduleData.module_order}
+                    </span>
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-zinc-900">
+                        {moduleData.name}
+                    </h1>
+                    <p className="text-zinc-600 max-w-2xl">{moduleData.topic}</p>
                 </div>
-                
-                {/* Duration Badge */}
-                <div className="flex items-center gap-2 text-slate-600 font-bold bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 max-md:self-start">
-                    <Clock className="w-5 h-5 text-primary" />
-                    {moduleData.duration} mins
-                </div>
-            </article>
+                <span className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 shrink-0">
+                    <Clock className="size-4 text-primary" aria-hidden />
+                    {moduleData.duration} min
+                </span>
+            </header>
 
-            {/* Launch the AI Agent */}
-            <CompanionComponent
-                moduleId={moduleData.id}
-                subject="coding" // Hardcoding a default subject style for now
-                topic={moduleData.topic}
-                name="AI Mentor"
-                userName={user.firstName!}
-                userImage={user.imageUrl!}
-                style="casual"
-                voice="male"
-                userInterest={moduleData.learning_paths?.user_interest || 'general real-world applications'}
-            />
-        </main>
-    )
-}
+            {moduleData.session_notes ? (
+                <>
+                    <SessionNotes markdown={moduleData.session_notes} />
+                    <details className="group">
+                        <summary className="cursor-pointer w-fit rounded-xl border border-stone-300 px-4 py-2 text-sm font-semibold text-zinc-800 hover:bg-white">
+                            Run this lesson again
+                        </summary>
+                        <div className="mt-6">{session}</div>
+                    </details>
+                </>
+            ) : (
+                session
+            )}
+        </div>
+    );
+};
 
 export default LessonPage;

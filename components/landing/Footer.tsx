@@ -4,8 +4,8 @@ import { Logo } from "./Logo";
 
 const COLUMNS = [
   { title: "Product", links: [["How it works", "/#solution", Route], ["Features", "/features", LayoutGrid], ["Pricing", "/pricing", CreditCard], ["FAQ", "/#faq", CircleHelp]] },
-  { title: "Account", links: [["Log in", "/sign-in", LogIn], ["Create account", "/sign-up", UserPlus], ["Dashboard", "/dashboard", LayoutDashboard], ["Settings", "/dashboard/settings", Settings]] },
-  { title: "Learn", links: [["Build a path", "/dashboard/new", PlusCircle], ["Session history", "/dashboard/history", History], ["My lessons", "/dashboard/lesson", BookOpen], ["The problem", "/#problem", AlertTriangle]] },
+  { title: "Account", links: [["Log in", "/sign-in", LogIn], ["Create account", "/sign-up", UserPlus], ["Dashboard", "/dashboard", LayoutDashboard], ["Settings", "/dashboard/profile", Settings]] },
+  { title: "Learn", links: [["Build a path", "/dashboard/lesson", PlusCircle], ["Session history", "/dashboard/history", History], ["My lessons", "/dashboard/lesson", BookOpen], ["The problem", "/#problem", AlertTriangle]] },
   { title: "Company", links: [["Blog", "/blog", BookOpen], ["About", "/about", Users], ["Contact", "/contact", Mail], ["Privacy", "/privacy", ShieldCheck], ["Terms", "/terms", FileText]] },
 ] as const;
 

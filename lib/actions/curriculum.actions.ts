@@ -2,7 +2,7 @@
 
 import Groq from 'groq-sdk';
 import { createSupabaseClient } from '../supabase';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -56,6 +56,12 @@ export async function generateSyllabus(targetSkill: string): Promise<ModuleTempl
 export const createLearningPath = async (targetSkill: string, userInterest: string) => {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
+
+    // A blank analogy falls back to the interest saved on the user's profile
+    if (!userInterest.trim()) {
+        const user = await currentUser();
+        userInterest = (user?.unsafeMetadata?.interest as string | undefined) ?? '';
+    }
 
     const supabase = createSupabaseClient();
     const generatedModules = await generateSyllabus(targetSkill);
@@ -149,4 +155,26 @@ export const markModuleCompleted = async (moduleId: string) => {
     if (error) throw new Error(error.message);
     
     return true;
+}
+
+// Every path the user owns (newest first), each with its modules in order.
+export const getUserPaths = async () => {
+    const { userId } = await auth();
+    if (!userId) return [];
+
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+        .from('learning_paths')
+        .select('*, path_modules(*)')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+    if (error) throw new Error(error.message);
+
+    return (data ?? []).map(({ path_modules, ...path }) => ({
+        path,
+        modules: [...(path_modules ?? [])].sort(
+            (a, b) => a.module_order - b.module_order,
+        ),
+    }));
 }
